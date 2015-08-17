@@ -6,41 +6,71 @@
     <title>Derek Peruo | Equisolve</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
   </head>
-  <body>
+  <body id="body" class="hidden-xs">
     <div class="container">
       <div class="row">
         <div class="col-xs-12">
           <h1 class="text-center">Latest Headlines</h1>
+          <br/>
           <dl id="newsfeed" class="dl-horizontal"></dl>
-          <h3 class="text-center">Getting More Headlines&hellip;</h3>
+          <h3 id="more" class="text-center" data-offset="0">Getting More Headlines&hellip;</h3>
         </div>
       </div>
     </div>
 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.6/zepto.min.js"></script>
 
     <script type="text/javascript">
 
-      var list = $('#newsfeed');
+      var body     = $('#body');
+      var more     = $('#more');
+      var newsfeed = $('#newsfeed');
+      var offset   = 0;
+      var limit    = 20;
+      var vpHeight = window.innerHeight;
 
-      $.get('http://www.stellarbiotechnologies.com/media/press-releases/json', {limit: ''}, function(response){
 
-        $.each(response.news, function(index, item) {
-          var date = item.published.substr(0,10);
-          var title = item.title;
 
-          var headline = [
+      window.onload = getNews;
+      window.onscroll = updateNews;
+
+      function getNews () {
+        $.get('http://www.stellarbiotechnologies.com/media/press-releases/json', {limit: limit, offset: offset}, function(response){
+
+          $.each(response.news, function(index, item) {
+            var date = item.published.substr(0,10);
+            var title = item.title;
+
+            var headline = [
             '<dt>' + date + '</dt>',
             '<dd>' + title + '</dd>',
             '<br/>'
-          ].join('');
+            ].join('');
 
-          list.append(headline);
+            newsfeed.append(headline);
+          });
+
+          console.log('@before', offset);
+
+          offset += limit;
+
+          console.log('@after', offset);
+
+          if (body.hasClass('hidden-xs')) {
+            body.removeClass('hidden-xs');
+          }
+
         });
-      });
+      }
+
+      function updateNews () {
+        if (more[0].getBoundingClientRect().top <= vpHeight) {
+          getNews();
+        }
+      }
     </script>
   </body>
 </html>
