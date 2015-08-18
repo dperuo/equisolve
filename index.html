@@ -60,7 +60,9 @@
       }
 
       function onscrollFn() {
-        // body...
+        if (more.getBoundingClientRect().top <= vpHeight) {
+          onloadFn();
+        }
       }
 
       function setHeadlines(response) {
@@ -109,55 +111,6 @@
         return "?" + queries.join('&');
       }
     })();
-
-
-
-      // var body     = $('#body');
-      // var more     = $('#more');
-      // var newsfeed = $('#newsfeed');
-      // var offset   = 0;
-      // var limit    = 20;
-      // var vpHeight = window.innerHeight;
-
-      // window.onload = getNews;
-      // window.onscroll = updateNews;
-
-      // function getNews () {
-      //   $.get('http://www.stellarbiotechnologies.com/media/press-releases/json', {limit: limit, offset: offset}, function(response){
-
-      //     if (response.news.length === 0) {
-      //       return;
-      //     }
-
-      //     $.each(response.news, function(index, item) {
-      //       var date = item.published.substr(0,10);
-      //       var title = item.title;
-
-      //       var headline = [
-      //       '<div class="item">',
-      //         '<dt>' + date + '</dt>',
-      //         '<dd>' + title + '</dd>',
-      //       '</div>',
-      //       '<br/>'
-      //       ].join('');
-
-      //       newsfeed.append(headline);
-      //     });
-
-      //     offset += limit;
-
-      //     if (body.hasClass('hidden-xs')) {
-      //       body.removeClass('hidden-xs');
-      //     }
-
-      //   });
-      // }
-
-      // function updateNews () {
-      //   if (more[0].getBoundingClientRect().top <= vpHeight) {
-      //     getNews();
-      //   }
-      // }
     </script>
   </body>
 </html>
