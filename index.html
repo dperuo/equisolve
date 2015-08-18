@@ -14,7 +14,7 @@
           <h1 class="text-center">Latest Headlines</h1>
           <br/>
           <dl id="newsfeed" class="dl-horizontal"></dl>
-          <h3 id="more" class="text-center" data-offset="0">Getting More Headlines&hellip;</h3>
+          <section id="more"></section>
         </div>
       </div>
     </div>
@@ -32,32 +32,32 @@
       var limit    = 20;
       var vpHeight = window.innerHeight;
 
-
-
       window.onload = getNews;
       window.onscroll = updateNews;
 
       function getNews () {
         $.get('http://www.stellarbiotechnologies.com/media/press-releases/json', {limit: limit, offset: offset}, function(response){
 
+          if (response.news.length === 0) {
+            return;
+          }
+
           $.each(response.news, function(index, item) {
             var date = item.published.substr(0,10);
             var title = item.title;
 
             var headline = [
-            '<dt>' + date + '</dt>',
-            '<dd>' + title + '</dd>',
+            '<div class="item">',
+              '<dt>' + date + '</dt>',
+              '<dd>' + title + '</dd>',
+            '</div>',
             '<br/>'
             ].join('');
 
             newsfeed.append(headline);
           });
 
-          console.log('@before', offset);
-
           offset += limit;
-
-          console.log('@after', offset);
 
           if (body.hasClass('hidden-xs')) {
             body.removeClass('hidden-xs');
