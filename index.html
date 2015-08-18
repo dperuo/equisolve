@@ -3,10 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
+
     <title>Derek Peruo | Equisolve</title>
+
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
+
   <body id="body" class="hidden-xs">
     <div class="container">
       <div class="row">
@@ -20,57 +23,141 @@
     </div>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.6/zepto.min.js"></script>
+
+    <!-- // <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.6/zepto.min.js"></script> -->
 
     <script type="text/javascript">
+    (function(undefined) {
+      'use strict';
 
-      var body     = $('#body');
-      var more     = $('#more');
-      var newsfeed = $('#newsfeed');
+      var body     = document.querySelector('#body');
+      var more     = document.querySelector('#more');
+      var newsfeed = document.querySelector('#newsfeed');
       var offset   = 0;
       var limit    = 20;
       var vpHeight = window.innerHeight;
 
-      window.onload = getNews;
-      window.onscroll = updateNews;
+      window.onload = onloadFn;
+      window.onscroll = onscrollFn;
 
-      function getNews () {
-        $.get('http://www.stellarbiotechnologies.com/media/press-releases/json', {limit: limit, offset: offset}, function(response){
+      function onloadFn() {
 
-          if (response.news.length === 0) {
-            return;
+        var url = 'http://www.stellarbiotechnologies.com/media/press-releases/json';
+        var params = { limit: limit, offset: offset };
+        var query = url + setQueryString(params);
+
+        var request = new XMLHttpRequest();
+
+        request.open('GET', query, true);
+
+        request.onload = function() {
+          if (this.status >= 200 && this.status < 400) {
+            setHeadlines(this.response);
           }
+        };
 
-          $.each(response.news, function(index, item) {
-            var date = item.published.substr(0,10);
-            var title = item.title;
-
-            var headline = [
-            '<div class="item">',
-              '<dt>' + date + '</dt>',
-              '<dd>' + title + '</dd>',
-            '</div>',
-            '<br/>'
-            ].join('');
-
-            newsfeed.append(headline);
-          });
-
-          offset += limit;
-
-          if (body.hasClass('hidden-xs')) {
-            body.removeClass('hidden-xs');
-          }
-
-        });
+        request.send();
       }
 
-      function updateNews () {
-        if (more[0].getBoundingClientRect().top <= vpHeight) {
-          getNews();
+      function onscrollFn() {
+        // body...
+      }
+
+      function setHeadlines(response) {
+
+        var headlines = JSON.parse(response).news;
+
+        if (headlines.length === 0) {
+          return;
+        }
+
+        headlines.forEach(function(value, index, array) {
+
+          var date  = value.published.substr(0,10);
+          var title = value.title;
+
+          var div = document.createElement('div');
+          var dt  = document.createElement('dt');
+          var dd  = document.createElement('dd');
+          var br  = document.createElement('br');
+
+          div.classList.add('item');
+
+          dt.innerHTML = date;
+          dd.innerHTML = title;
+
+          div.appendChild(dt);
+          div.appendChild(dd);
+          div.appendChild(br);
+
+          newsfeed.appendChild(div);
+        });
+
+        offset += limit;
+
+        if (body.classList.contains('hidden-xs')) {
+          body.classList.remove('hidden-xs');
         }
       }
+
+      function setQueryString (params) {
+
+        var queries = Object.keys(params).map(function(key) {
+          return [key, '=', params[key]].join('');
+        });
+
+        return "?" + queries.join('&');
+      }
+    })();
+
+
+
+      // var body     = $('#body');
+      // var more     = $('#more');
+      // var newsfeed = $('#newsfeed');
+      // var offset   = 0;
+      // var limit    = 20;
+      // var vpHeight = window.innerHeight;
+
+      // window.onload = getNews;
+      // window.onscroll = updateNews;
+
+      // function getNews () {
+      //   $.get('http://www.stellarbiotechnologies.com/media/press-releases/json', {limit: limit, offset: offset}, function(response){
+
+      //     if (response.news.length === 0) {
+      //       return;
+      //     }
+
+      //     $.each(response.news, function(index, item) {
+      //       var date = item.published.substr(0,10);
+      //       var title = item.title;
+
+      //       var headline = [
+      //       '<div class="item">',
+      //         '<dt>' + date + '</dt>',
+      //         '<dd>' + title + '</dd>',
+      //       '</div>',
+      //       '<br/>'
+      //       ].join('');
+
+      //       newsfeed.append(headline);
+      //     });
+
+      //     offset += limit;
+
+      //     if (body.hasClass('hidden-xs')) {
+      //       body.removeClass('hidden-xs');
+      //     }
+
+      //   });
+      // }
+
+      // function updateNews () {
+      //   if (more[0].getBoundingClientRect().top <= vpHeight) {
+      //     getNews();
+      //   }
+      // }
     </script>
   </body>
 </html>
