@@ -10,21 +10,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
 
-  <body id="body" class="hidden-xs">
+  <body id="body">
     <div class="container">
       <div class="row">
         <div class="col-xs-12">
           <h1 class="text-center">Latest Headlines</h1>
           <br/>
           <dl id="newsfeed" class="dl-horizontal"></dl>
-          <section id="more"></section>
+          <h3 id="more" class="text-center">Getting headlines&hellip;</h3>
         </div>
       </div>
     </div>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-
-    <!-- // <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.6/zepto.min.js"></script> -->
 
     <script type="text/javascript">
     (function(undefined) {
@@ -70,6 +68,7 @@
         var headlines = JSON.parse(response).news;
 
         if (headlines.length === 0) {
+          more.classList.add('hidden');
           return;
         }
 
@@ -96,10 +95,6 @@
         });
 
         offset += limit;
-
-        if (body.classList.contains('hidden-xs')) {
-          body.classList.remove('hidden-xs');
-        }
       }
 
       function setQueryString (params) {
